@@ -1,5 +1,7 @@
 package metadatafetch;
 
+import studentsmanageproject.StudentManagementSystem;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.Vector;
 
+import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 import static studentsmanageproject.OptimizeColumnRendering.ocr;
 import static studentsmanageproject.StudentManagementSystem.conn;
 
@@ -161,7 +164,7 @@ public class ViewTableDialog extends JDialog {
                     }
                 } catch (SQLException ex) {
                     ex.printStackTrace();
-                    JOptionPane.showMessageDialog(this, "数据库更新错误: " + ex.getMessage());
+                    StudentManagementSystem.showMessageDialog(this, "数据库更新错误: " + ex.getMessage(), "消息", INFORMATION_MESSAGE);
                 }
             }
         });

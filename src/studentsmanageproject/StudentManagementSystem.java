@@ -1,8 +1,6 @@
 package studentsmanageproject;
 
-import metadatafetch.FetchData;
 import metadatafetch.ViewTableDialog;
-import metadatafetch.ViewViewDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,9 +9,9 @@ import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
 
 import static java.awt.Font.BOLD;
+import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 
 public class StudentManagementSystem {
     public static Connection conn;
@@ -25,7 +23,7 @@ public class StudentManagementSystem {
             String URL = "jdbc:mysql://192.168.188.128:3306/students_manage";
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(frame, "数据库连接错误: " + e.getMessage());
+            showMessageDialog(frame, "数据库连接错误: " + e.getMessage(), "消息", INFORMATION_MESSAGE);
             return null;
         }
     }
@@ -41,9 +39,6 @@ public class StudentManagementSystem {
         int y = (screenSize.height - frame.getHeight()) / 2;
         // 设置窗口的位置
         frame.setLocation(x, y);
-
-        // 获取数据库连接
-        conn = getConnection();
         /*
         //登陆窗口
         LoginDialog loginDialog = new LoginDialog(frame);
@@ -98,7 +93,7 @@ public class StudentManagementSystem {
         JMenu menu5 = new JMenu("宿舍管理");
 
         JMenu menu6 = new JMenu("通知发布");
-
+/*
         JMenu menu8 = new JMenu("查看数据库");
         List<List<String>> tables = FetchData.fetchDatabaseInformation();
         for (int i = 0; i < tables.size(); i++) {
@@ -112,6 +107,7 @@ public class StudentManagementSystem {
             }
             menu8.add(temp);
         }
+ */
 
         JMenu menu7 = new JMenu("连接状态") {
             @Override
@@ -132,6 +128,12 @@ public class StudentManagementSystem {
             menu7.setBackground(Color.RED);
             menu7.repaint();
         }).start());
+        // 异步获取数据库连接
+        new Thread(() -> {
+            conn = getConnection();
+            menu7.setBackground(Color.RED);
+            menu7.repaint();
+        }).start();
 
 
         menuBar.add(menu1);
@@ -141,7 +143,7 @@ public class StudentManagementSystem {
         menuBar.add(menu5);
         menuBar.add(menu6);
         menuBar.add(menu7);
-        menuBar.add(menu8);
+        //menuBar.add(menu8);
         frame.setJMenuBar(menuBar);
 
         // 添加面板
@@ -190,6 +192,20 @@ public class StudentManagementSystem {
         UIManager.put("Table.font", font);
         UIManager.put("TableHeader.font", font);
         // 如果有其他组件需要设置，可以继续添加
+    }
+    public static void showMessageDialog(Component parentComponent, Object message,
+                                         String title, int messageType) {
+        if (message instanceof String && ((String) message).length() > 20) {
+            JTextArea textArea = new JTextArea((String) message);
+            textArea.setEditable(false);
+            textArea.setLineWrap(true);// 设置自动换行
+            textArea.setWrapStyleWord(true);// 设置空格换行策略
+            JScrollPane scrollPane = new JScrollPane(textArea);
+            scrollPane.setPreferredSize(new Dimension(800, 150));
+            JOptionPane.showMessageDialog(parentComponent, scrollPane, title, messageType);
+        } else {
+            JOptionPane.showMessageDialog(parentComponent, message, title, messageType);
+        }
     }
 }
 class Check {
