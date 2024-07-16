@@ -24,6 +24,11 @@ public class ForeignKeyEditorWithButton extends JFrame {
 
         tableModel = new DefaultTableModel(data, columnNames);
         table = new JTable(tableModel);
+        tableModel.addTableModelListener(e -> {
+            int row = e.getFirstRow();
+            int column = e.getColumn();
+            //System.out.println(row + "行" + column + "列有更改:" + tableModel.getValueAt(row, column));
+        });
 
         TableColumn column = table.getColumnModel().getColumn(2);
         // 设置自定义表格单元格呈现器和编辑器
@@ -86,10 +91,7 @@ public class ForeignKeyEditorWithButton extends JFrame {
             button.setMargin(new Insets(0, 0, 0, 0));
             panel.add(editorComponent, BorderLayout.CENTER);
             panel.add(button, BorderLayout.EAST);
-            button.addActionListener(e -> {
-                fireEditingStopped();
-                showForeignKeyDialog(row, column);
-            });
+            button.addActionListener(e -> showForeignKeyDialog(row, column));
             return panel;
         }
 
@@ -116,7 +118,7 @@ public class ForeignKeyEditorWithButton extends JFrame {
             DefaultTableModel referenceTableModel = new DefaultTableModel(data, columnNames){
                 @Override
                 public boolean isCellEditable(int rowIndex, int columnIndex) {
-                    // 直接返回 false表示所有单元格都不可编辑
+                    // 返回 false表示所有单元格都不可编辑
                     return false;
                 }
             };
@@ -147,7 +149,8 @@ public class ForeignKeyEditorWithButton extends JFrame {
                 int selectedRow = referenceTable.getSelectedRow();
                 if (selectedRow != -1) {
                     String selectedDepartment = (String) referenceTableModel.getValueAt(selectedRow, 0);
-                    tableModel.setValueAt(selectedDepartment, row, column);
+                    delegate.setValue(selectedDepartment);
+                    stopCellEditing(); // 传播更新事件到表格模型,相当于:tableModel.setValueAt(selectedDepartment, row, column);
                     dialog.dispose();
                 }
             });
