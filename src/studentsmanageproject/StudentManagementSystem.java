@@ -1,6 +1,8 @@
 package studentsmanageproject;
 
+import metadatafetch.FetchData;
 import metadatafetch.ViewTableDialog;
+import metadatafetch.ViewViewDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,6 +11,7 @@ import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 
 import static java.awt.Font.BOLD;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
@@ -93,21 +96,9 @@ public class StudentManagementSystem {
         JMenu menu5 = new JMenu("宿舍管理");
 
         JMenu menu6 = new JMenu("通知发布");
-/*
+
         JMenu menu8 = new JMenu("查看数据库");
-        List<List<String>> tables = FetchData.fetchDatabaseInformation();
-        for (int i = 0; i < tables.size(); i++) {
-            String tableName = tables.get(i).get(0);
-            String tableType = tables.get(i).get(1);
-            JMenuItem temp = new JMenuItem(tableName);
-            if (tableType.equals("TABLE")) {
-                temp.addActionListener(e -> new ViewTableDialog(frame, "查看" + tableName, Dialog.ModalityType.MODELESS, tableName));
-            } else if (tableType.equals("VIEW")) {
-                temp.addActionListener(e -> new ViewViewDialog(frame, "查看" + tableName, Dialog.ModalityType.MODELESS, tableName));
-            }
-            menu8.add(temp);
-        }
- */
+
 
         JMenu menu7 = new JMenu("连接状态") {
             @Override
@@ -133,6 +124,18 @@ public class StudentManagementSystem {
             conn = getConnection();
             menu7.setBackground(Color.RED);
             menu7.repaint();
+            List<List<String>> tables = FetchData.fetchDatabaseInformation();
+            for (List<String> table : tables) {
+                String tableName = table.get(0);
+                String tableType = table.get(1);
+                JMenuItem temp = new JMenuItem(tableName);
+                if (tableType.equals("TABLE")) {
+                    temp.addActionListener(e -> new ViewTableDialog(frame, "查看" + tableName, Dialog.ModalityType.MODELESS, tableName));
+                } else if (tableType.equals("VIEW")) {
+                    temp.addActionListener(e -> new ViewViewDialog(frame, "查看" + tableName, Dialog.ModalityType.MODELESS, tableName));
+                }
+                menu8.add(temp);
+            }
         }).start();
 
 
@@ -143,7 +146,7 @@ public class StudentManagementSystem {
         menuBar.add(menu5);
         menuBar.add(menu6);
         menuBar.add(menu7);
-        //menuBar.add(menu8);
+        menuBar.add(menu8);
         frame.setJMenuBar(menuBar);
 
         // 添加面板
