@@ -2,15 +2,11 @@ package metadatafetch;
 
 import foreignkeyeditorwithbutton.ButtonEditor;
 import foreignkeyeditorwithbutton.ButtonRenderer;
-import studentsmanageproject.StudentManagementSystem;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -18,9 +14,7 @@ import java.util.Vector;
 
 import static java.awt.BorderLayout.CENTER;
 import static java.awt.BorderLayout.SOUTH;
-import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 import static studentsmanageproject.OptimizeColumnRendering.ocr;
-import static studentsmanageproject.StudentManagementSystem.conn;
 
 public class ViewTableDialog extends JDialog {
     List<String> columnNames = new Vector<>();
@@ -115,7 +109,7 @@ public class ViewTableDialog extends JDialog {
             int column = e.getColumn();
             System.out.println(row + "行" + column + "列有更改:" + tableModel.getValueAt(row, column));
         });
-        // 监听表格模型的更改事件
+        /* 监听表格模型的更改事件
         tableModel.addTableModelListener(e -> {
             int row = e.getFirstRow();
             int column = e.getColumn();
@@ -156,6 +150,8 @@ public class ViewTableDialog extends JDialog {
                 }
             }
         });
+
+         */
         setVisible(true);
     }
 }

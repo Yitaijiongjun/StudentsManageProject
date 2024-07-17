@@ -31,7 +31,7 @@ public class ButtonEditor extends DefaultCellEditor {
         button.addActionListener(e -> showForeignKeyDialog(row, column));
         panel.add(button, EAST);
 
-        setClickCountToStart(1);// 为避免渲染器死按钮影响操作, 调整点击次数为 1
+        setClickCountToStart(2);// 渲染器为死按钮需注意
 
         this.parent = parent;
         this.referenceTableName = referenceTableName;
@@ -135,7 +135,22 @@ public class ButtonEditor extends DefaultCellEditor {
         dialog.add(tableScrollPane, CENTER);
         dialog.add(footer, SOUTH);
 
-        dialog.setLocationRelativeTo(parent);
+        // 遍历 JDialog 的所有子组件，寻找 JScrollPane
+        Component[] components = dialog.getContentPane().getComponents();
+        JScrollPane scrollPane = null;
+        for (Component comp : components) {
+            if (comp instanceof JScrollPane) {
+                scrollPane = (JScrollPane) comp;
+                break;
+            }
+        }
+        JTable table = (JTable) scrollPane.getViewport().getView();
+        Point rootLocation = parent.getLocationOnScreen();
+        Point location = table.getCellRect(row, column, true).getLocation();
+        SwingUtilities.convertPointToScreen(location, table);
+        dialog.setLocation(
+                location.x + table.getCellRect(row, column, true).width + rootLocation.x + 65,
+                location.y + table.getCellRect(row, column, true).height + rootLocation.y + 85);
         dialog.setVisible(true);
     }
 }
