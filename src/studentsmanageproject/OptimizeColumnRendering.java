@@ -30,9 +30,7 @@ public class OptimizeColumnRendering {
                 renderer = table.getDefaultRenderer(Object.class);
                 column.setCellRenderer(renderer);
             }
-            if (renderer instanceof DefaultTableCellRenderer) {
-                ((DefaultTableCellRenderer) renderer).setHorizontalAlignment(JLabel.CENTER);
-            }
+            ((DefaultTableCellRenderer) renderer).setHorizontalAlignment(JLabel.CENTER);
         }
         return totalWidth;
     }

@@ -128,6 +128,7 @@ UPDATE_RULE short => What happens to a foreign key when the primary key is updat
                     fk.add(fkName);
                     fk.add(pkTableName);
                     fk.add(pkColumnName);
+                    foreignKeys.add(fk);
                 }
             }
         } catch (SQLException e) {

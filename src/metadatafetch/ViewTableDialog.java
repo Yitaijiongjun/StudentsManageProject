@@ -1,9 +1,12 @@
 package metadatafetch;
 
+import foreignkeyeditorwithbutton.ButtonEditor;
+import foreignkeyeditorwithbutton.ButtonRenderer;
 import studentsmanageproject.StudentManagementSystem;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,27 +16,31 @@ import java.util.List;
 import java.util.StringJoiner;
 import java.util.Vector;
 
+import static java.awt.BorderLayout.CENTER;
+import static java.awt.BorderLayout.SOUTH;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 import static studentsmanageproject.OptimizeColumnRendering.ocr;
 import static studentsmanageproject.StudentManagementSystem.conn;
 
 public class ViewTableDialog extends JDialog {
+    List<String> columnNames = new Vector<>();
+    List<Class<?>> columnTypes = new Vector<>();
+    List<List<Object>> data = new Vector<>();
+    List<List<String>> primaryKeys = new ArrayList<>();
+    List<List<String>> foreignKeys = new ArrayList<>();
+    final String pkClause;
+    String insertClause;
+    String updateClause;
+
     public ViewTableDialog(Frame parent, String title, ModalityType modal, String tableName) {
         super(parent, title, modal);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         System.out.println("窗口构造");
 
-        List<String> columnNames = new Vector<>();
-        List<Class<?>> columnTypes = new Vector<>();
-        List<List<Object>> data = new Vector<>();
-        List<List<String>> primaryKeys = new ArrayList<>();
-        List<List<String>> foreignKeys = new ArrayList<>();
-
         FetchData.fetchData(columnNames, columnTypes, data, tableName);
 
         FetchData.fetchTableInformation(primaryKeys, foreignKeys, tableName);
 
-        final String pkClause;
         StringJoiner pkStringJoiner = new StringJoiner(" AND ");
         for (List<String> pk : primaryKeys) pkStringJoiner.add("`" + pk.get(0) + "`" + " = ?");
         pkClause = pkStringJoiner.toString();
@@ -44,42 +51,18 @@ public class ViewTableDialog extends JDialog {
 
         // 设置表格行高
         table.setRowHeight(30);
-/*
-        int totalWidth = 0;
 
-        for (int columnIndex = 0; columnIndex < table.getColumnCount(); columnIndex++) {
-            TableColumn column = table.getColumnModel().getColumn(columnIndex);
-            // 初始为列名宽度
-            TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
-            Component headerComponent = headerRenderer.getTableCellRendererComponent(table, column.getHeaderValue(), false, false, 0, columnIndex);
-            int maxWidth = headerComponent.getPreferredSize().width;
-            // 遍历单元格宽度
-            for (int rowIndex = 0; rowIndex < table.getRowCount(); rowIndex++) {
-                TableCellRenderer cellRenderer = table.getCellRenderer(rowIndex, columnIndex);
-                Component c = table.prepareRenderer(cellRenderer, rowIndex, columnIndex);
-                int width = c.getPreferredSize().width;
-                maxWidth = Math.max(maxWidth, width);
-            }
-            column.setPreferredWidth(maxWidth);
-
-            totalWidth += maxWidth + 25;
-
-            // 设置居中显示
-            TableCellRenderer renderer = column.getCellRenderer();
-            if (renderer == null) {
-                renderer = table.getDefaultRenderer(Object.class);
-                column.setCellRenderer(renderer);
-            }
-            if (renderer instanceof DefaultTableCellRenderer) {
-                ((DefaultTableCellRenderer) renderer).setHorizontalAlignment(JLabel.CENTER);
-            }
+        for(List<String> foreignKey : foreignKeys){
+            TableColumn pkcolumn = table.getColumnModel().getColumn(columnNames.indexOf(foreignKey.get(0)));
+            pkcolumn.setCellRenderer(new ButtonRenderer());
+            pkcolumn.setCellEditor(new ButtonEditor(new JTextField(), this, foreignKey.get(2)));
         }
- */
-        setSize(ocr(table), 900);
+
+        setSize(ocr(table), 600);
         setLocationRelativeTo(parent);
 
         JScrollPane scrollPane = new JScrollPane(table);
-        add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, CENTER);
 
         // 创建按钮面板
         JPanel buttonPanel = new JPanel();
@@ -91,7 +74,7 @@ public class ViewTableDialog extends JDialog {
         buttonPanel.add(addButton);
         buttonPanel.add(submitButton);
         buttonPanel.add(cancelButton);
-        add(buttonPanel, BorderLayout.SOUTH);
+        add(buttonPanel, SOUTH);
 
         // 添加按钮事件监听器
         deleteButton.addActionListener(e -> {
@@ -127,6 +110,11 @@ public class ViewTableDialog extends JDialog {
          */
 
 
+        tableModel.addTableModelListener(e -> {
+            int row = e.getFirstRow();
+            int column = e.getColumn();
+            System.out.println(row + "行" + column + "列有更改:" + tableModel.getValueAt(row, column));
+        });
         // 监听表格模型的更改事件
         tableModel.addTableModelListener(e -> {
             int row = e.getFirstRow();

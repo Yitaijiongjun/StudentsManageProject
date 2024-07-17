@@ -1,14 +1,11 @@
 package foreignkeyeditorwithbutton;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import java.awt.*;
 
 import static java.awt.BorderLayout.CENTER;
-
+@Deprecated
 public class ForeignKeyEditorWithButton extends JFrame {
     private JTable table;
     private DefaultTableModel tableModel;
@@ -38,7 +35,7 @@ public class ForeignKeyEditorWithButton extends JFrame {
         TableColumn column = table.getColumnModel().getColumn(2);
         // 设置自定义表格单元格呈现器和编辑器
         column.setCellRenderer(new ButtonRenderer());
-        column.setCellEditor(new ButtonEditor(new JTextField(), this));
+        //column.setCellEditor(new ButtonEditor(new JTextField(), this));
 
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, CENTER);
@@ -50,27 +47,4 @@ public class ForeignKeyEditorWithButton extends JFrame {
             editor.setVisible(true);
         });
     }
-
-    class ButtonRenderer extends JPanel implements TableCellRenderer {
-        private JButton button;// 该按钮仅有外观意义
-        private DefaultTableCellRenderer label;
-        public ButtonRenderer() {
-            super();
-            setLayout(new BorderLayout());
-            button = new JButton("...");
-            button.setMargin(new Insets(0, 0, 0, 0));
-            label = new DefaultTableCellRenderer();
-            add(label, CENTER);
-            add(button, BorderLayout.EAST);
-        }
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus,
-                                                       int row, int column) {
-            label.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            label.setText(value == null ? "" : value.toString());
-            return this;
-        }
-    }
-
-
 }
