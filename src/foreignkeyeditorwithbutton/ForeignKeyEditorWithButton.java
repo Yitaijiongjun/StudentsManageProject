@@ -27,7 +27,7 @@ public class ForeignKeyEditorWithButton extends JFrame {
         tableModel.addTableModelListener(e -> {
             int row = e.getFirstRow();
             int column = e.getColumn();
-            //System.out.println(row + "行" + column + "列有更改:" + tableModel.getValueAt(row, column));
+            System.out.println(row + "行" + column + "列有更改:" + tableModel.getValueAt(row, column));
         });
 
         TableColumn column = table.getColumnModel().getColumn(2);
@@ -47,51 +47,48 @@ public class ForeignKeyEditorWithButton extends JFrame {
     }
 
     class ButtonRenderer extends JPanel implements TableCellRenderer {
-        private JButton button;
+        private JButton button;// 该按钮仅有外观意义
         private DefaultTableCellRenderer label;
         public ButtonRenderer() {
             super();
             setLayout(new BorderLayout());
             button = new JButton("...");
             button.setMargin(new Insets(0, 0, 0, 0));
-            add(button, BorderLayout.EAST);
-
             label = new DefaultTableCellRenderer();
             add(label, BorderLayout.CENTER);
+            add(button, BorderLayout.EAST);
         }
-
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus,
                                                        int row, int column) {
             label.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             label.setText(value == null ? "" : value.toString());
-/*
-            if (isSelected) {
-                setBackground(table.getSelectionBackground());
-            } else {
-                setBackground(table.getBackground());
-            }
-
- */
             return this;
         }
     }
 
     class ButtonEditor extends DefaultCellEditor {
+        JPanel panel;
+        JButton button;
+        int row, column;
         public ButtonEditor(JTextField textField) {
             super(textField);
-            setClickCountToStart(1);
+            panel = new JPanel(new BorderLayout());
+            button = new JButton("...");
+            button.setMargin(new Insets(0, 0, 0, 0));
+            panel.add(editorComponent, BorderLayout.CENTER);
+
+            button.addActionListener(e -> showForeignKeyDialog(row, column));
+            panel.add(button, BorderLayout.EAST);
+
+            setClickCountToStart(1);// 为避免渲染器死按钮影响操作, 调整点击次数为 1
         }
         public Component getTableCellEditorComponent(JTable table, Object value,
                                                      boolean isSelected,
                                                      int row, int column) {
             delegate.setValue(value);
-            JPanel panel = new JPanel(new BorderLayout());
-            JButton button = new JButton("...");
-            button.setMargin(new Insets(0, 0, 0, 0));
-            panel.add(editorComponent, BorderLayout.CENTER);
-            panel.add(button, BorderLayout.EAST);
-            button.addActionListener(e -> showForeignKeyDialog(row, column));
+            this.row = row;
+            this.column = column;
             return panel;
         }
 

@@ -73,7 +73,8 @@ public class StudentManagement extends JFrame {
 
         add(buttonPanel, BorderLayout.SOUTH);
 
-        setSize(500, 600);
+        pack();
+        setSize(getPreferredSize());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }

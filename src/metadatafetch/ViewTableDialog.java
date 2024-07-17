@@ -33,10 +33,10 @@ public class ViewTableDialog extends JDialog {
 
         FetchData.fetchTableInformation(primaryKeys, foreignKeys, tableName);
 
-        final String pkStatement;
-        StringJoiner pkClause = new StringJoiner(" AND ");
-        for (List<String> pk : primaryKeys) pkClause.add("`" + pk.get(0) + "`" + " = ?");
-        pkStatement = pkClause.toString();
+        final String pkClause;
+        StringJoiner pkStringJoiner = new StringJoiner(" AND ");
+        for (List<String> pk : primaryKeys) pkStringJoiner.add("`" + pk.get(0) + "`" + " = ?");
+        pkClause = pkStringJoiner.toString();
 
         DefaultTableModel tableModel = new DefaultTableModel((Vector) data, (Vector) columnNames);
 
@@ -136,8 +136,8 @@ public class ViewTableDialog extends JDialog {
                 Object newData = tableModel.getValueAt(row, column);
                 // 获取更新的列名
                 String columnName = tableModel.getColumnName(column);
-                String query = "SELECT * FROM `" + tableName + "` WHERE " + pkStatement;
-                String update = "UPDATE `"+ tableName +"` SET `" + columnName + "` = ? WHERE " + pkStatement;
+                String query = "SELECT * FROM `" + tableName + "` WHERE " + pkClause;
+                String update = "UPDATE `"+ tableName +"` SET `" + columnName + "` = ? WHERE " + pkClause;
                 //String insert = "INSERT INTO `"　+ tableName + "` (`" + columnName + "`) VALUES (?)";
                 try {
                     try (PreparedStatement queryStmt = conn.prepareStatement(query);
