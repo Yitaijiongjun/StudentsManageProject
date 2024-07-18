@@ -15,7 +15,7 @@ import java.util.Vector;
 import java.sql.*;
 
 import static java.awt.BorderLayout.*;
-import static java.awt.ScrollPane.SCROLLBARS_ALWAYS;
+import static java.awt.Toolkit.getDefaultToolkit;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 import static metadatafetch.FetchData.*;
 import static studentsmanageproject.OptimizeColumnRendering.ocr;
@@ -30,11 +30,15 @@ public class ViewTableDialog extends JDialog {
     final String pkClause;
     String insertClause;
     String updateClause;
+    String iconDirectory = "C:/Users/21056/IdeaProjects/DatabaseProject/iconImage/";
 
+    static int row = 0;
+    static int column = 1;
+    static int newData = 2;
     public ViewTableDialog(Frame parent, String title, ModalityType modal, String tableName) {
         super(parent, title, modal);
         setIconImage((new ImageIcon
-                ( "C:/Users/21056/IdeaProjects/DatabaseProject/iconImage/ViewTableDialog.png")).getImage());
+                ( iconDirectory + "ViewTableDialog.png")).getImage());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         FetchData.fetchData(columnNames, columnTypes, data, tableName);
@@ -73,16 +77,35 @@ public class ViewTableDialog extends JDialog {
         table.revalidate();
         table.repaint();
         setLocationRelativeTo(parent);
+        Insets insets = new Insets(4,4,4,4);
         // 创建按钮面板
+        Image originalImage = getDefaultToolkit().getImage("path/to/large/image.png");
+        Icon scaledIcon = new ImageIcon(originalImage.getScaledInstance(32, 32, Image.SCALE_SMOOTH));
+
         JPanel buttonPanel = new JPanel();
-        JButton deleteButton = new JButton("删除");
-        JButton addButton = new JButton("插入");
-        JButton submitButton = new JButton("确认");
-        JButton cancelButton = new JButton("取消");
-        buttonPanel.add(deleteButton);
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+        JButton addButton = new JButton(new ImageIcon((getDefaultToolkit().getImage(iconDirectory + "addButton.png")).getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+        addButton.setToolTipText("添加记录");
+        addButton.setMargin(insets);
+        JButton deleteButton = new JButton(new ImageIcon((getDefaultToolkit().getImage(iconDirectory + "deleteButton.png")).getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+        deleteButton.setToolTipText("删除记录");
+        deleteButton.setMargin(insets);
+        JButton submitButton = new JButton(new ImageIcon((getDefaultToolkit().getImage(iconDirectory + "submitButton.png")).getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+        submitButton.setToolTipText("应用更改");
+        submitButton.setMargin(insets);
+        JButton cancelButton = new JButton(new ImageIcon((getDefaultToolkit().getImage(iconDirectory + "cancelButton.png")).getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+        cancelButton.setToolTipText("放弃更改");
+        cancelButton.setMargin(new Insets(6,6,6,6));
+        JButton flashButton = new JButton(new ImageIcon((getDefaultToolkit().getImage(iconDirectory + "flashButton.png")).getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+        flashButton.setToolTipText("刷新");
+        flashButton.setMargin(new Insets(6,6,6,6));
+        buttonPanel.add(Box.createRigidArea(new Dimension(5,0)));
         buttonPanel.add(addButton);
+        buttonPanel.add(deleteButton);
         buttonPanel.add(submitButton);
         buttonPanel.add(cancelButton);
+        buttonPanel.add(flashButton);
+        buttonPanel.add(Box.createHorizontalGlue());
         add(buttonPanel, SOUTH);
 
         // 添加按钮事件监听器
@@ -93,43 +116,19 @@ public class ViewTableDialog extends JDialog {
             }
         });
 
-        addButton.addActionListener(e -> tableModel.addRow(new Object[]{null, null, null}));
-/*
+        Object[] o = new Object[columnNames.size()];
+
+        addButton.addActionListener(e -> tableModel.addRow(o));
+
+        List<List<Object>> valueCache = new ArrayList<>();
+
         submitButton.addActionListener(e -> {
             // 将缓存的更改应用到源数据
-            for (Object[] rowData : rowDataCache) {
-                int index = (int) rowData[0];
-                model.setValueAt(rowData[1], index, 1);
-                model.setValueAt(rowData[2], index, 2);
+            for (List<Object> rowData : valueCache) {
+                for(Object value : rowData) {
+                    tableModel.setValueAt(value, valueCache.indexOf(rowData), rowData.indexOf(value));
+                }
             }
-            rowDataCache.clear();
-        });
-
-        cancelButton.addActionListener(e -> {
-            // 还原表格到修改前的状态
-            while (model.getRowCount() > 0) {
-                model.removeRow(0);
-            }
-            for (Object[] rowData : rowDataCache) {
-                model.addRow(rowData);
-            }
-            rowDataCache.clear();
-        });
-
-         */
-
-
-        tableModel.addTableModelListener(e -> {
-            int row = e.getFirstRow();
-            int column = e.getColumn();
-            if (column != -1) {
-                System.out.println(row + "行" + column + "列有更改:" + tableModel.getValueAt(row, column));
-            }
-        });
-        //监听表格模型的更改事件
-        tableModel.addTableModelListener(e -> {
-            int row = e.getFirstRow();
-            int column = e.getColumn();
             // 判断是否为新增行
             if (column != -1) {
                 Object newData = tableModel.getValueAt(row, column);
@@ -142,7 +141,7 @@ public class ViewTableDialog extends JDialog {
                     try (PreparedStatement queryStmt = conn.prepareStatement(query);
                          PreparedStatement updateStmt = conn.prepareStatement(update);
                          //PreparedStatement insertStmt = conn.prepareStatement(execute);
-                         ) {
+                    ) {
                         // 设置更新行的主键
                         for (int i = 0; i < primaryKeys.size(); i++) {
                             queryStmt.setObject(i + 1, tableModel.getValueAt(row, columnNames.indexOf(primaryKeys.get(i).get(COLUMN_NAME))));
@@ -167,6 +166,27 @@ public class ViewTableDialog extends JDialog {
                     ex.printStackTrace();
                     StudentManagementSystem.showMessageDialog(this, "数据库更新错误: " + ex.getMessage(), "消息", INFORMATION_MESSAGE);
                 }
+            }
+            valueCache.clear();
+        });
+
+        cancelButton.addActionListener(e -> {
+            // 还原表格到修改前的状态
+        });
+
+
+        //监听表格模型的更改事件
+        tableModel.addTableModelListener(e -> {
+            int row = e.getFirstRow();
+            int column = e.getColumn();
+            if (column != -1) {
+                Object value = tableModel.getValueAt(row, column);
+                List<Object> valueInformation = new ArrayList<>();
+                valueInformation.add(row);
+                valueInformation.add(column);
+                valueInformation.add(value);
+                valueCache.add(valueInformation);
+                System.out.println(row + "行" + column + "列有更改:" + tableModel.getValueAt(row, column));
             }
         });
         setVisible(true);

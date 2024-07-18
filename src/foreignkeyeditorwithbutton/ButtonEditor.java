@@ -76,13 +76,13 @@ public class ButtonEditor extends DefaultCellEditor {
         rightHeader.add(flush);
         rightHeader.add(fullDisplay);
         rightHeader.add(siftTextFiled);
-        JToggleButton showCloumn = new JToggleButton("列名");
-        showCloumn.setMargin(new Insets(0,0,0,0));
-        showCloumn.setSelected(true);
-        showCloumn.addActionListener(e -> {
-            if (showCloumn.isSelected()) leftGuide.setVisible(true);
+        JToggleButton showColumn = new JToggleButton("列名");
+        showColumn.setMargin(new Insets(0,0,0,0));
+        showColumn.setSelected(true);
+        showColumn.addActionListener(e -> {
+            if (showColumn.isSelected()) leftGuide.setVisible(true);
             else leftGuide.setVisible(false);});
-        leftHeader.add(showCloumn);
+        leftHeader.add(showColumn);
         header.add(rightHeader, EAST);
         header.add(leftHeader, WEST);
 
