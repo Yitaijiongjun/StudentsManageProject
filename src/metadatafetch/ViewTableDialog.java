@@ -48,7 +48,7 @@ public class ViewTableDialog extends JDialog {
         JTable table = new JTable(tableModel);
 
         // 设置表格行高
-        table.setRowHeight(30);
+        table.setRowHeight(34);
 
         setSize(ocr(table), 600);
         table.revalidate();
@@ -59,10 +59,13 @@ public class ViewTableDialog extends JDialog {
         add(scrollPane, CENTER);
 
         for(List<String> foreignKey : foreignKeys){
-            TableColumn fkcolumn = table.getColumnModel().getColumn(columnNames.indexOf(foreignKey.get(FKCOLUMN_NAME)));
+            int index = columnNames.indexOf(foreignKey.get(FKCOLUMN_NAME));
+            TableColumn fkcolumn = table.getColumnModel().getColumn(index);
             fkcolumn.setCellRenderer(new ButtonRenderer());
             fkcolumn.setCellEditor(new ButtonEditor(new JTextField(), this, table,
             tableName, foreignKey.get(FKCOLUMN_NAME), foreignKey.get(FK_NAME), foreignKey.get(PKTABLE_NAME), foreignKey.get(PKCOLUMN_NAME)));
+            //TableColumn column = table.getColumnModel().getColumn(index);
+            //column.setPreferredWidth(column.getPreferredWidth() );
         }
 
         // 创建按钮面板

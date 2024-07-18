@@ -5,7 +5,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 public class ButtonRenderer extends DefaultTableCellRenderer{
-    JPanel panel = new JPanel();
+    JPanel panel = new JPanel(new BorderLayout());
     JButton button = new JButton("...");// 该按钮仅有外观意义
     DefaultTableCellRenderer label = new DefaultTableCellRenderer();
     public ButtonRenderer() {
@@ -13,7 +13,6 @@ public class ButtonRenderer extends DefaultTableCellRenderer{
         java.awt.Font defaultFont = new Font("Dialog",Font.BOLD,24);
         // 将系统默认字体应用到按钮上
         button.setFont(defaultFont);
-        panel.setLayout(new BorderLayout());
         button.setMargin(new Insets(0, 0, 0, 0));
         panel.add(label, CENTER);
         panel.add(button, BorderLayout.EAST);
@@ -26,10 +25,11 @@ public class ButtonRenderer extends DefaultTableCellRenderer{
         label.setText(value == null ? "" : value.toString());
         return panel;
     }
-    @Override
+    /*@Override
     public Dimension getPreferredSize() {
-        return new Dimension(preferredSize().width + 6, preferredSize().height);
+        return new Dimension(preferredSize().width , preferredSize().height);
     }
+     */
 }
 
 
