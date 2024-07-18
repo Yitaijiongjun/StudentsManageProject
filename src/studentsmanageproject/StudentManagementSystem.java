@@ -1,5 +1,6 @@
 package studentsmanageproject;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import metadatafetch.FetchData;
 import metadatafetch.ViewTableDialog;
 import metadatafetch.ViewViewDialog;
@@ -174,7 +175,13 @@ public class StudentManagementSystem {
         });
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        //UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+        //UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
+        //UIManager.setLookAndFeel("apple.laf.AquaLookAndFeel");
+        UIManager.setLookAndFeel(new FlatLightLaf());
+
         // 设置全局字体
         setGlobalFont(new Font("宋体", BOLD, 24));
         // 启动主系统
