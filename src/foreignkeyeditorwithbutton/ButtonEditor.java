@@ -7,20 +7,24 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import static java.awt.BorderLayout.*;
 import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
+import static metadatafetch.FetchData.FKCOLUMN_NAME;
 import static studentsmanageproject.OptimizeColumnRendering.ocr;
 
 public class ButtonEditor extends DefaultCellEditor {
     Window parent;
     JPanel panel = new JPanel(new BorderLayout());
     JButton button = new JButton("...");
-    String referenceTableName;
+    String referenceTableName, fkTableName, fkColumnName, fkName, referenceColumnName;
     int row, column;
-    public ButtonEditor(JTextField textField, Window parent, String referenceTableName) {
+    public ButtonEditor(JTextField textField, Window parent, String fkTableName, String fkColumnName, String fkName, String referenceTableName, String referenceColumnName) {
         super(textField);
         Font defaultFont = new Font("Dialog",Font.BOLD,24);
         // 将系统默认字体应用到按钮上
@@ -34,7 +38,11 @@ public class ButtonEditor extends DefaultCellEditor {
         setClickCountToStart(2);// 渲染器为死按钮需注意
 
         this.parent = parent;
+        this.fkTableName = fkTableName;
+        this.fkColumnName = fkColumnName;
+        this.fkName = fkName;
         this.referenceTableName = referenceTableName;
+        this.referenceColumnName = referenceColumnName;
     }
     public Component getTableCellEditorComponent(JTable table, Object value,
                                                  boolean isSelected,
@@ -48,6 +56,7 @@ public class ButtonEditor extends DefaultCellEditor {
     public void showForeignKeyDialog(int row, int column) {
         JDialog dialog = new JDialog(parent, "选择院系", APPLICATION_MODAL);
         dialog.setLayout(new BorderLayout());
+        dialog.setIconImage((new ImageIcon("C:\\Users\\21056\\Pictures\\Saved Pictures\\屏幕截图 2024-07-18 223540.png")).getImage());
         JPanel header = new JPanel(new BorderLayout());
         JPanel rightHeader = new JPanel(new FlowLayout());
         JPanel leftHeader = new JPanel(new FlowLayout());
@@ -77,6 +86,8 @@ public class ButtonEditor extends DefaultCellEditor {
         List<List<Object>> data = new Vector<>();
 
         FetchData.fetchData(columnNames, columnTypes, data, referenceTableName);
+
+        dialog.setTitle(fkName + " : " + fkTableName + "(" + fkColumnName + ") - " + referenceTableName + "(" + referenceColumnName + ")");
 
         DefaultTableModel referenceTableModel = new DefaultTableModel((Vector) data, (Vector) columnNames){
             @Override
@@ -113,8 +124,8 @@ public class ButtonEditor extends DefaultCellEditor {
         selectButton.addActionListener(e -> {
             int selectedRow = referenceTable.getSelectedRow();
             if (selectedRow != -1) {
-                Object selectedDepartment = referenceTableModel.getValueAt(selectedRow, 0);
-                delegate.setValue(selectedDepartment);
+                Object selectedPk = referenceTableModel.getValueAt(selectedRow, columnNames.indexOf(referenceColumnName));
+                delegate.setValue(selectedPk);
                 stopCellEditing(); // 传播更新事件到表格模型,相当于:tableModel.setValueAt(selectedDepartment, row, column);
                 dialog.dispose();
             }

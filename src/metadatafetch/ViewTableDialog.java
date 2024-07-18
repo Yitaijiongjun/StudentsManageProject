@@ -51,9 +51,10 @@ public class ViewTableDialog extends JDialog {
         table.setRowHeight(30);
 
         for(List<String> foreignKey : foreignKeys){
-            TableColumn pkcolumn = table.getColumnModel().getColumn(columnNames.indexOf(foreignKey.get(FKCOLUMN_NAME)));
-            pkcolumn.setCellRenderer(new ButtonRenderer());
-            pkcolumn.setCellEditor(new ButtonEditor(new JTextField(), this, foreignKey.get(PKTABLE_NAME)));
+            TableColumn fkcolumn = table.getColumnModel().getColumn(columnNames.indexOf(foreignKey.get(FKCOLUMN_NAME)));
+            fkcolumn.setCellRenderer(new ButtonRenderer());
+            fkcolumn.setCellEditor(new ButtonEditor(new JTextField(), this,
+            tableName, foreignKey.get(FKCOLUMN_NAME), foreignKey.get(FK_NAME), foreignKey.get(PKTABLE_NAME), foreignKey.get(PKCOLUMN_NAME)));
         }
 
         setSize(ocr(table), 600);
