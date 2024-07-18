@@ -183,6 +183,7 @@ public class StudentManagementSystem {
     public static void setGlobalFont(Font font) {
         UIManager.put("Label.font", font);
         UIManager.put("Button.font", font);
+        UIManager.put("ToggleButton.font", font);
         UIManager.put("CheckBox.font", font);
         UIManager.put("TextField.font", font);
         UIManager.put("FormattedTextField.font", font);

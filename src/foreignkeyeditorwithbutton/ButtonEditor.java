@@ -19,12 +19,14 @@ import static metadatafetch.FetchData.FKCOLUMN_NAME;
 import static studentsmanageproject.OptimizeColumnRendering.ocr;
 
 public class ButtonEditor extends DefaultCellEditor {
-    Window parent;
+    JDialog parent;
+    JTable maintable;
     JPanel panel = new JPanel(new BorderLayout());
     JButton button = new JButton("...");
     String referenceTableName, fkTableName, fkColumnName, fkName, referenceColumnName;
     int row, column;
-    public ButtonEditor(JTextField textField, Window parent, String fkTableName, String fkColumnName, String fkName, String referenceTableName, String referenceColumnName) {
+    public ButtonEditor(JTextField textField, JDialog parent, JTable maintable, String fkTableName,
+    String fkColumnName, String fkName, String referenceTableName, String referenceColumnName) {
         super(textField);
         Font defaultFont = new Font("Dialog",Font.BOLD,24);
         // 将系统默认字体应用到按钮上
@@ -38,6 +40,7 @@ public class ButtonEditor extends DefaultCellEditor {
         setClickCountToStart(2);// 渲染器为死按钮需注意
 
         this.parent = parent;
+        this.maintable = maintable;
         this.fkTableName = fkTableName;
         this.fkColumnName = fkColumnName;
         this.fkName = fkName;
@@ -56,11 +59,15 @@ public class ButtonEditor extends DefaultCellEditor {
     public void showForeignKeyDialog(int row, int column) {
         JDialog dialog = new JDialog(parent, "选择院系", APPLICATION_MODAL);
         dialog.setLayout(new BorderLayout());
-        dialog.setIconImage((new ImageIcon("C:\\Users\\21056\\Pictures\\Saved Pictures\\屏幕截图 2024-07-18 223540.png")).getImage());
+        dialog.setIconImage((new ImageIcon
+                ("C:/Users/21056/Pictures/Saved Pictures/屏幕截图 2024-07-18 223540.png")).getImage());
         JPanel header = new JPanel(new BorderLayout());
         JPanel rightHeader = new JPanel(new FlowLayout());
         JPanel leftHeader = new JPanel(new FlowLayout());
-        //JPanel leftGuide = new JPanel(new BoxLayout());
+
+        JPanel leftGuide = new JPanel();
+        leftGuide.setLayout(new BoxLayout(leftGuide, BoxLayout.Y_AXIS));
+
         JButton flush = new JButton("刷新");
         flush.setMargin(new Insets(0,0,0,0));
         JButton fullDisplay = new JButton("全显");
@@ -69,14 +76,12 @@ public class ButtonEditor extends DefaultCellEditor {
         rightHeader.add(flush);
         rightHeader.add(fullDisplay);
         rightHeader.add(siftTextFiled);
-        JToggleButton showCloumn = new JToggleButton("显示列名");
-        showCloumn.setPreferredSize(new Dimension(60, 25));
+        JToggleButton showCloumn = new JToggleButton("列名");
         showCloumn.setMargin(new Insets(0,0,0,0));
+        showCloumn.setSelected(true);
         showCloumn.addActionListener(e -> {
-            if (showCloumn.isSelected()) {
-            } else {
-            }
-        });
+            if (showCloumn.isSelected()) leftGuide.setVisible(true);
+            else leftGuide.setVisible(false);});
         leftHeader.add(showCloumn);
         header.add(rightHeader, EAST);
         header.add(leftHeader, WEST);
@@ -99,26 +104,44 @@ public class ButtonEditor extends DefaultCellEditor {
         JTable referenceTable = new JTable(referenceTableModel);
         referenceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         referenceTable.setRowHeight(30);
-        dialog.setSize(ocr(referenceTable), 800);
+        referenceTable.getTableHeader().setReorderingAllowed(false);
+        referenceTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+        List<Integer> columnPreferredSize = new ArrayList<>();
+
+        dialog.setSize(ocr(referenceTable, columnPreferredSize) + 100, 600);
+        dialog.setMinimumSize(dialog.getSize());
         JScrollPane tableScrollPane = new JScrollPane(referenceTable);
 
-        JPanel checkBoxPanel = new JPanel(new FlowLayout());
-        JCheckBox showColumnNameCheckBox = new JCheckBox("显示院系全称");
-        showColumnNameCheckBox.setSelected(true);
-        showColumnNameCheckBox.addItemListener(e -> {
-            TableColumnModel columnModel = referenceTable.getColumnModel();
-            TableColumn selectColumn = columnModel.getColumn(1);
-            if (showColumnNameCheckBox.isSelected()) {
-                selectColumn.setMinWidth(100);
-                selectColumn.setMaxWidth(200);
-                selectColumn.setPreferredWidth(150);
-            } else {
-                selectColumn.setMinWidth(0);
-                selectColumn.setMaxWidth(0);
-                selectColumn.setPreferredWidth(0);
+        TableColumnModel columnModel = referenceTable.getColumnModel();
+        for(String columnName : columnNames) {
+            JCheckBox showColumnNameCheckBox = new JCheckBox(columnName);
+            if(columnName.equals(referenceColumnName)) {
+                showColumnNameCheckBox.setSelected(true);
             }
-        });
-        checkBoxPanel.add(showColumnNameCheckBox);
+            TableColumn currentColumn = columnModel.getColumn(columnNames.indexOf(columnName));
+            showColumnNameCheckBox.addItemListener(e -> {
+                if (showColumnNameCheckBox.isSelected()) {
+                    currentColumn.setMinWidth(columnPreferredSize.get(columnNames.indexOf(columnName)));
+                    currentColumn.setMaxWidth(columnPreferredSize.get(columnNames.indexOf(columnName)) * 20);
+                    currentColumn.setPreferredWidth(columnPreferredSize.get(columnNames.indexOf(columnName)));
+                } else {
+                    currentColumn.setMinWidth(0);
+                    currentColumn.setMaxWidth(0);
+                    currentColumn.setPreferredWidth(0);
+                }
+            });
+            if (showColumnNameCheckBox.isSelected()) {
+                currentColumn.setMinWidth(columnPreferredSize.get(columnNames.indexOf(columnName)));
+                currentColumn.setMaxWidth(columnPreferredSize.get(columnNames.indexOf(columnName)) * 20);
+                currentColumn.setPreferredWidth(columnPreferredSize.get(columnNames.indexOf(columnName)));
+            } else {
+                currentColumn.setMinWidth(0);
+                currentColumn.setMaxWidth(0);
+                currentColumn.setPreferredWidth(0);
+            }
+            leftGuide.add(showColumnNameCheckBox);
+        }
 
         JButton selectButton = new JButton("确定");
         selectButton.addActionListener(e -> {
@@ -143,25 +166,14 @@ public class ButtonEditor extends DefaultCellEditor {
         footer.add(status, WEST);
 
         dialog.add(header, NORTH);
+        dialog.add(leftGuide, WEST);
         dialog.add(tableScrollPane, CENTER);
         dialog.add(footer, SOUTH);
 
-        // 遍历 JDialog 的所有子组件，寻找 JScrollPane
-        Component[] components = dialog.getContentPane().getComponents();
-        JScrollPane scrollPane = null;
-        for (Component comp : components) {
-            if (comp instanceof JScrollPane) {
-                scrollPane = (JScrollPane) comp;
-                break;
-            }
-        }
-        JTable table = (JTable) scrollPane.getViewport().getView();
-        Point rootLocation = parent.getLocationOnScreen();
-        Point location = table.getCellRect(row, column, true).getLocation();
-        SwingUtilities.convertPointToScreen(location, table);
-        dialog.setLocation(
-                location.x + table.getCellRect(row, column, true).width + rootLocation.x + 65,
-                location.y + table.getCellRect(row, column, true).height + rootLocation.y + 85);
+        Rectangle r = maintable.getCellRect(row, column, true);
+        Point location =r.getLocation();
+        SwingUtilities.convertPointToScreen(location, parent);
+        dialog.setLocation( location.x, location.y + r.height + 85);
         dialog.setVisible(true);
     }
 }

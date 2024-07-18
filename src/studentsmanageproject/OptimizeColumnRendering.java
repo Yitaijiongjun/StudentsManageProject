@@ -5,9 +5,13 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
+import java.util.List;
 
 public class OptimizeColumnRendering {
     public static int ocr(JTable table){
+        return ocr(table, null);
+    }
+    public static int ocr(JTable table, List<Integer> columnPreferredSize){
         int totalWidth = 0;
         for (int columnIndex = 0; columnIndex < table.getColumnCount(); columnIndex++) {
             TableColumn column = table.getColumnModel().getColumn(columnIndex);
@@ -22,8 +26,9 @@ public class OptimizeColumnRendering {
                 int width = c.getPreferredSize().width;
                 maxWidth = Math.max(maxWidth, width);
             }
-            column.setPreferredWidth(maxWidth + 20);
-            totalWidth += maxWidth + 30;
+            if(columnPreferredSize != null) columnPreferredSize.add(maxWidth);
+            column.setPreferredWidth(maxWidth + 30);
+            totalWidth += maxWidth + 40;
             // 设置居中显示
             TableCellRenderer renderer = column.getCellRenderer();
             if (renderer == null) {
