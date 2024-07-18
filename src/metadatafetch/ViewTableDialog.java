@@ -33,7 +33,6 @@ public class ViewTableDialog extends JDialog {
     public ViewTableDialog(Frame parent, String title, ModalityType modal, String tableName) {
         super(parent, title, modal);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        System.out.println("窗口构造");
 
         FetchData.fetchData(columnNames, columnTypes, data, tableName);
 
@@ -63,7 +62,8 @@ public class ViewTableDialog extends JDialog {
             TableColumn fkcolumn = table.getColumnModel().getColumn(index);
             fkcolumn.setCellRenderer(new ButtonRenderer());
             fkcolumn.setCellEditor(new ButtonEditor(new JTextField(), this, table,
-            tableName, foreignKey.get(FKCOLUMN_NAME), foreignKey.get(FK_NAME), foreignKey.get(PKTABLE_NAME), foreignKey.get(PKCOLUMN_NAME)));
+            tableName, foreignKey.get(FKCOLUMN_NAME), foreignKey.get(FK_NAME),
+            foreignKey.get(PKTABLE_NAME), foreignKey.get(PKCOLUMN_NAME)));
             //TableColumn column = table.getColumnModel().getColumn(index);
             //column.setPreferredWidth(column.getPreferredWidth() );
         }

@@ -60,7 +60,7 @@ public class ButtonEditor extends DefaultCellEditor {
         JDialog dialog = new JDialog(parent, "选择院系", APPLICATION_MODAL);
         dialog.setLayout(new BorderLayout());
         dialog.setIconImage((new ImageIcon
-                ("C:/Users/21056/Pictures/Saved Pictures/屏幕截图 2024-07-18 223540.png")).getImage());
+                ("C:/Users/21056/IdeaProjects/DatabaseProject/iconImage/foreignKeyDialog.png")).getImage());
         JPanel header = new JPanel(new BorderLayout());
         JPanel rightHeader = new JPanel(new FlowLayout());
         JPanel leftHeader = new JPanel(new FlowLayout());
