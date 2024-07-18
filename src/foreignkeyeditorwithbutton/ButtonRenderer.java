@@ -13,7 +13,7 @@ public class ButtonRenderer extends DefaultTableCellRenderer{
         java.awt.Font defaultFont = new Font("Dialog",Font.BOLD,24);
         // 将系统默认字体应用到按钮上
         button.setFont(defaultFont);
-        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setMargin(new Insets(0, 3, 0, 3));
         panel.add(label, CENTER);
         panel.add(button, BorderLayout.EAST);
     }

@@ -31,7 +31,7 @@ public class ButtonEditor extends DefaultCellEditor {
         Font defaultFont = new Font("Dialog",Font.BOLD,24);
         // 将系统默认字体应用到按钮上
         button.setFont(defaultFont);
-        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setMargin(new Insets(0, 3, 0, 3));
         panel.add(editorComponent, CENTER);
 
         button.addActionListener(e -> showForeignKeyDialog(row, column));
@@ -173,7 +173,7 @@ public class ButtonEditor extends DefaultCellEditor {
         Rectangle r = maintable.getCellRect(row, column, true);
         Point location =r.getLocation();
         SwingUtilities.convertPointToScreen(location, parent);
-        dialog.setLocation( location.x + 3, location.y + r.height + 85);
+        dialog.setLocation( location.x + 3, location.y + r.height + 95);
         dialog.setVisible(true);
     }
 }
