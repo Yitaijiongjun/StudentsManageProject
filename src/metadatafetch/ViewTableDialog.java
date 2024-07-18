@@ -16,6 +16,7 @@ import java.sql.*;
 
 import static java.awt.BorderLayout.*;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
+import static metadatafetch.FetchData.*;
 import static studentsmanageproject.OptimizeColumnRendering.ocr;
 import static studentsmanageproject.StudentManagementSystem.conn;
 
@@ -39,7 +40,7 @@ public class ViewTableDialog extends JDialog {
         FetchData.fetchTableInformation(primaryKeys, foreignKeys, tableName);
 
         StringJoiner pkStringJoiner = new StringJoiner(" AND ");
-        for (List<String> pk : primaryKeys) pkStringJoiner.add("`" + pk.get(0) + "`" + " = ?");
+        for (List<String> pk : primaryKeys) pkStringJoiner.add("`" + pk.get(COLUMN_NAME) + "`" + " = ?");
         pkClause = pkStringJoiner.toString();
 
         DefaultTableModel tableModel = new DefaultTableModel((Vector) data, (Vector) columnNames);
@@ -50,9 +51,9 @@ public class ViewTableDialog extends JDialog {
         table.setRowHeight(30);
 
         for(List<String> foreignKey : foreignKeys){
-            TableColumn pkcolumn = table.getColumnModel().getColumn(columnNames.indexOf(foreignKey.get(0)));
+            TableColumn pkcolumn = table.getColumnModel().getColumn(columnNames.indexOf(foreignKey.get(FKCOLUMN_NAME)));
             pkcolumn.setCellRenderer(new ButtonRenderer());
-            pkcolumn.setCellEditor(new ButtonEditor(new JTextField(), this, foreignKey.get(2)));
+            pkcolumn.setCellEditor(new ButtonEditor(new JTextField(), this, foreignKey.get(PKTABLE_NAME)));
         }
 
         setSize(ocr(table), 600);
@@ -81,7 +82,7 @@ public class ViewTableDialog extends JDialog {
             }
         });
 
-        addButton.addActionListener(e -> tableModel.addRow(new Object[]{"", "", ""}));
+        addButton.addActionListener(e -> tableModel.addRow(new Object[]{null, null, null}));
 /*
         submitButton.addActionListener(e -> {
             // 将缓存的更改应用到源数据
@@ -133,8 +134,8 @@ public class ViewTableDialog extends JDialog {
                          ) {
                         // 设置更新行的主键
                         for (int i = 0; i < primaryKeys.size(); i++) {
-                            queryStmt.setObject(i + 1, tableModel.getValueAt(row, columnNames.indexOf(primaryKeys.get(i).get(0))));
-                            updateStmt.setObject(i + 2, tableModel.getValueAt(row, columnNames.indexOf(primaryKeys.get(i).get(0))));
+                            queryStmt.setObject(i + 1, tableModel.getValueAt(row, columnNames.indexOf(primaryKeys.get(i).get(COLUMN_NAME))));
+                            updateStmt.setObject(i + 2, tableModel.getValueAt(row, columnNames.indexOf(primaryKeys.get(i).get(COLUMN_NAME))));
                         }
                         ResultSet queryRs = queryStmt.executeQuery();
 
@@ -144,9 +145,11 @@ public class ViewTableDialog extends JDialog {
                         int executeRs = updateStmt.executeUpdate();
 
                         if (executeRs > 0) {
-                            JOptionPane.showMessageDialog(this, "更新成功: " + newData);
+                            //JOptionPane.showMessageDialog(this, "更新成功: " + newData);
+                            System.out.println("更新成功: " + newData);
                         } else if (primaryKeys.size() <= 1){
-                            JOptionPane.showMessageDialog(this, "更新失败");
+                            //JOptionPane.showMessageDialog(this, "更新失败");
+                            System.out.println("更新失败: ");
                         }
                     }
                 } catch (SQLException ex) {
@@ -155,7 +158,6 @@ public class ViewTableDialog extends JDialog {
                 }
             }
         });
-
         setVisible(true);
     }
 }

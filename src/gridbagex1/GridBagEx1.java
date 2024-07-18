@@ -1,4 +1,4 @@
-package departmentselector;
+package gridbagex1;
 
 import java.applet.Applet;
 import java.awt.*;

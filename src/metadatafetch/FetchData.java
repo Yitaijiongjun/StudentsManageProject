@@ -10,6 +10,15 @@ import static studentsmanageproject.StudentManagementSystem.conn;
 import static studentsmanageproject.StudentManagementSystem.frame;
 
 public class FetchData {
+    public final static int TABLE_NAME = 0;
+    public final static int TABLE_TYPE = 1;
+    public final static int COLUMN_NAME = 0;
+    public final static int PK_NAME = 1;
+    public final static int KEY_SEQ = 2;
+    public final static int FKCOLUMN_NAME = 0;
+    public final static int FK_NAME = 1;
+    public final static int PKTABLE_NAME = 2;
+    public final static int PKCOLUMN_NAME = 3;
     static public void fetchData(List<String> columnNames, List<Class<?>> columnTypes, List<List<Object>> data, String tableName) {
         try {
             String query = "SELECT * FROM `"+ tableName +"`";

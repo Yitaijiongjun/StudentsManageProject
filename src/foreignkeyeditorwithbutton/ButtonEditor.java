@@ -47,11 +47,11 @@ public class ButtonEditor extends DefaultCellEditor {
 
     public void showForeignKeyDialog(int row, int column) {
         JDialog dialog = new JDialog(parent, "选择院系", APPLICATION_MODAL);
-        dialog.setSize(400, 300);
         dialog.setLayout(new BorderLayout());
         JPanel header = new JPanel(new BorderLayout());
         JPanel rightHeader = new JPanel(new FlowLayout());
         JPanel leftHeader = new JPanel(new FlowLayout());
+        //JPanel leftGuide = new JPanel(new BoxLayout());
         JButton flush = new JButton("刷新");
         flush.setMargin(new Insets(0,0,0,0));
         JButton fullDisplay = new JButton("全显");
@@ -88,7 +88,7 @@ public class ButtonEditor extends DefaultCellEditor {
         JTable referenceTable = new JTable(referenceTableModel);
         referenceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         referenceTable.setRowHeight(30);
-        dialog.setSize(ocr(referenceTable), 900);
+        dialog.setSize(ocr(referenceTable), 800);
         JScrollPane tableScrollPane = new JScrollPane(referenceTable);
 
         JPanel checkBoxPanel = new JPanel(new FlowLayout());
