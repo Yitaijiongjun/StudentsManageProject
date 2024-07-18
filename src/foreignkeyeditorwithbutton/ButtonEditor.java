@@ -22,7 +22,7 @@ public class ButtonEditor extends DefaultCellEditor {
     int row, column;
     public ButtonEditor(JTextField textField, Window parent, String referenceTableName) {
         super(textField);
-        java.awt.Font defaultFont = new Font("Dialog",Font.BOLD,24);
+        Font defaultFont = new Font("Dialog",Font.BOLD,24);
         // 将系统默认字体应用到按钮上
         button.setFont(defaultFont);
         button.setMargin(new Insets(0, 0, 0, 0));
