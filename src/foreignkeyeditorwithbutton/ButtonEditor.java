@@ -109,7 +109,7 @@ public class ButtonEditor extends DefaultCellEditor {
 
         List<Integer> columnPreferredSize = new ArrayList<>();
 
-        dialog.setSize(ocr(referenceTable, columnPreferredSize) + 100, 600);
+        dialog.setSize(ocr(referenceTable, columnPreferredSize) + 110, 600);
         dialog.setMinimumSize(dialog.getSize());
         JScrollPane tableScrollPane = new JScrollPane(referenceTable);
 
@@ -123,7 +123,7 @@ public class ButtonEditor extends DefaultCellEditor {
             showColumnNameCheckBox.addItemListener(e -> {
                 if (showColumnNameCheckBox.isSelected()) {
                     currentColumn.setMinWidth(columnPreferredSize.get(columnNames.indexOf(columnName)));
-                    currentColumn.setMaxWidth(columnPreferredSize.get(columnNames.indexOf(columnName)) * 20);
+                    currentColumn.setMaxWidth(columnPreferredSize.get(columnNames.indexOf(columnName)) * 4);
                     currentColumn.setPreferredWidth(columnPreferredSize.get(columnNames.indexOf(columnName)));
                 } else {
                     currentColumn.setMinWidth(0);
@@ -133,7 +133,7 @@ public class ButtonEditor extends DefaultCellEditor {
             });
             if (showColumnNameCheckBox.isSelected()) {
                 currentColumn.setMinWidth(columnPreferredSize.get(columnNames.indexOf(columnName)));
-                currentColumn.setMaxWidth(columnPreferredSize.get(columnNames.indexOf(columnName)) * 20);
+                currentColumn.setMaxWidth(columnPreferredSize.get(columnNames.indexOf(columnName)) * 4);
                 currentColumn.setPreferredWidth(columnPreferredSize.get(columnNames.indexOf(columnName)));
             } else {
                 currentColumn.setMinWidth(0);

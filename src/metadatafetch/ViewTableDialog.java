@@ -15,6 +15,7 @@ import java.util.Vector;
 import java.sql.*;
 
 import static java.awt.BorderLayout.*;
+import static java.awt.ScrollPane.SCROLLBARS_ALWAYS;
 import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
 import static metadatafetch.FetchData.*;
 import static studentsmanageproject.OptimizeColumnRendering.ocr;
@@ -32,6 +33,8 @@ public class ViewTableDialog extends JDialog {
 
     public ViewTableDialog(Frame parent, String title, ModalityType modal, String tableName) {
         super(parent, title, modal);
+        setIconImage((new ImageIcon
+                ( "C:/Users/21056/IdeaProjects/DatabaseProject/iconImage/ViewTableDialog.png")).getImage());
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         FetchData.fetchData(columnNames, columnTypes, data, tableName);
@@ -46,15 +49,10 @@ public class ViewTableDialog extends JDialog {
 
         JTable table = new JTable(tableModel);
 
-        // 设置表格行高
-        table.setRowHeight(34);
 
-        setSize(ocr(table), 600);
-        table.revalidate();
-        table.repaint();
-        setLocationRelativeTo(parent);
 
         JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(scrollPane, CENTER);
 
         for(List<String> foreignKey : foreignKeys){
@@ -64,10 +62,17 @@ public class ViewTableDialog extends JDialog {
             fkcolumn.setCellEditor(new ButtonEditor(new JTextField(), this, table,
             tableName, foreignKey.get(FKCOLUMN_NAME), foreignKey.get(FK_NAME),
             foreignKey.get(PKTABLE_NAME), foreignKey.get(PKCOLUMN_NAME)));
-            //TableColumn column = table.getColumnModel().getColumn(index);
-            //column.setPreferredWidth(column.getPreferredWidth() );
+            TableColumn column = table.getColumnModel().getColumn(index);
+            column.setPreferredWidth(column.getPreferredWidth() + 3);
         }
 
+        // 设置表格行高
+        table.setRowHeight(34);
+
+        setSize(ocr(table), 600);
+        table.revalidate();
+        table.repaint();
+        setLocationRelativeTo(parent);
         // 创建按钮面板
         JPanel buttonPanel = new JPanel();
         JButton deleteButton = new JButton("删除");

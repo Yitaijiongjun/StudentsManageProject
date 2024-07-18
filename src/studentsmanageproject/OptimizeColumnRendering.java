@@ -17,6 +17,8 @@ public class OptimizeColumnRendering {
             TableColumn column = table.getColumnModel().getColumn(columnIndex);
             // 初始为列名宽度
             TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
+            // 设置渲染器的对齐方式为居中
+            ((DefaultTableCellRenderer)headerRenderer).setHorizontalAlignment(SwingConstants.CENTER);
             Component headerComponent = headerRenderer.getTableCellRendererComponent(table, column.getHeaderValue(), false, false, 0, columnIndex);
             int maxWidth = headerComponent.getPreferredSize().width;
             // 遍历单元格宽度
@@ -27,8 +29,8 @@ public class OptimizeColumnRendering {
                 maxWidth = Math.max(maxWidth, width);
             }
             if(columnPreferredSize != null) columnPreferredSize.add(maxWidth);
-            column.setPreferredWidth(maxWidth + 30);
-            totalWidth += maxWidth + 40;
+            column.setPreferredWidth(maxWidth + 25);
+            totalWidth += maxWidth + 30;
             // 设置居中显示
             TableCellRenderer renderer = column.getCellRenderer();
             if (renderer == null) {

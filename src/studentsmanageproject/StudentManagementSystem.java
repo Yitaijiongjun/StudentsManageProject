@@ -36,6 +36,8 @@ public class StudentManagementSystem {
         frame = new JFrame("学生信息管理系统");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 600);
+        frame.setIconImage((new ImageIcon
+                ("C:/Users/21056/IdeaProjects/DatabaseProject/iconImage/SystemFrame.png")).getImage());
         // 获取屏幕尺寸
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         // 计算窗口的 x和 y位置，使其居中
