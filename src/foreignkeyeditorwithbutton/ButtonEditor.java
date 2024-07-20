@@ -109,7 +109,7 @@ public class ButtonEditor extends DefaultCellEditor {
 
         List<Integer> columnPreferredSize = new ArrayList<>();
 
-        dialog.setSize(ocr(referenceTable, columnPreferredSize) + 110, 600);
+        dialog.setSize(ocr(referenceTable, columnPreferredSize) + 120, 600);
         dialog.setMinimumSize(dialog.getSize());
         JScrollPane tableScrollPane = new JScrollPane(referenceTable);
 

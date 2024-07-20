@@ -32,8 +32,8 @@ public class ViewTableDialog extends JDialog {
     String updateClause;
     String iconDirectory = "C:/Users/21056/IdeaProjects/DatabaseProject/iconImage/";
 
-    static int row = 0;
-    static int column = 1;
+    static int rowIndex = 0;
+    static int columnIndex = 1;
     static int newData = 2;
     public ViewTableDialog(Frame parent, String title, ModalityType modal, String tableName) {
         super(parent, title, modal);
@@ -121,59 +121,59 @@ public class ViewTableDialog extends JDialog {
         addButton.addActionListener(e -> tableModel.addRow(o));
 
         List<List<Object>> valueCache = new ArrayList<>();
-
+/*
         submitButton.addActionListener(e -> {
             // 将缓存的更改应用到源数据
             for (List<Object> rowData : valueCache) {
-                for(Object value : rowData) {
+                for (Object value : rowData) {
                     tableModel.setValueAt(value, valueCache.indexOf(rowData), rowData.indexOf(value));
                 }
-            }
-            // 判断是否为新增行
-            if (column != -1) {
-                Object newData = tableModel.getValueAt(row, column);
-                // 获取更新的列名
-                String columnName = tableModel.getColumnName(column);
-                String query = "SELECT * FROM `" + tableName + "` WHERE " + pkClause;
-                String update = "UPDATE `"+ tableName +"` SET `" + columnName + "` = ? WHERE " + pkClause;
-                //String insert = "INSERT INTO `"　+ tableName + "` (`" + columnName + "`) VALUES (?)";
-                try {
-                    try (PreparedStatement queryStmt = conn.prepareStatement(query);
-                         PreparedStatement updateStmt = conn.prepareStatement(update);
-                         //PreparedStatement insertStmt = conn.prepareStatement(execute);
-                    ) {
-                        // 设置更新行的主键
-                        for (int i = 0; i < primaryKeys.size(); i++) {
-                            queryStmt.setObject(i + 1, tableModel.getValueAt(row, columnNames.indexOf(primaryKeys.get(i).get(COLUMN_NAME))));
-                            updateStmt.setObject(i + 2, tableModel.getValueAt(row, columnNames.indexOf(primaryKeys.get(i).get(COLUMN_NAME))));
+                // 判断是否为新增行
+                if (column != -1) {
+                    Object newData = tableModel.getValueAt(row, column);
+                    // 获取更新的列名
+                    String columnName = tableModel.getColumnName(column);
+                    String query = "SELECT * FROM `" + tableName + "` WHERE " + pkClause;
+                    String update = "UPDATE `" + tableName + "` SET `" + columnName + "` = ? WHERE " + pkClause;
+                    //String insert = "INSERT INTO `"　+ tableName + "` (`" + columnName + "`) VALUES (?)";
+                    try {
+                        try (PreparedStatement queryStmt = conn.prepareStatement(query);
+                             PreparedStatement updateStmt = conn.prepareStatement(update);
+                             //PreparedStatement insertStmt = conn.prepareStatement(execute);
+                        ) {
+                            // 设置更新行的主键
+                            for (int i = 0; i < primaryKeys.size(); i++) {
+                                queryStmt.setObject(i + 1, tableModel.getValueAt(row, columnNames.indexOf(primaryKeys.get(i).get(COLUMN_NAME))));
+                                updateStmt.setObject(i + 2, tableModel.getValueAt(row, columnNames.indexOf(primaryKeys.get(i).get(COLUMN_NAME))));
+                            }
+                            ResultSet queryRs = queryStmt.executeQuery();
+
+                            // 设置新值
+                            updateStmt.setObject(1, newData);
+
+                            int executeRs = updateStmt.executeUpdate();
+
+                            if (executeRs > 0) {
+                                //JOptionPane.showMessageDialog(this, "更新成功: " + newData);
+                                System.out.println("更新成功: " + newData);
+                            } else if (primaryKeys.size() <= 1) {
+                                //JOptionPane.showMessageDialog(this, "更新失败");
+                                System.out.println("更新失败: ");
+                            }
                         }
-                        ResultSet queryRs = queryStmt.executeQuery();
-
-                        // 设置新值
-                        updateStmt.setObject(1, newData);
-
-                        int executeRs = updateStmt.executeUpdate();
-
-                        if (executeRs > 0) {
-                            //JOptionPane.showMessageDialog(this, "更新成功: " + newData);
-                            System.out.println("更新成功: " + newData);
-                        } else if (primaryKeys.size() <= 1){
-                            //JOptionPane.showMessageDialog(this, "更新失败");
-                            System.out.println("更新失败: ");
-                        }
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                        StudentManagementSystem.showMessageDialog(this, "数据库更新错误: " + ex.getMessage(), "消息", INFORMATION_MESSAGE);
                     }
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                    StudentManagementSystem.showMessageDialog(this, "数据库更新错误: " + ex.getMessage(), "消息", INFORMATION_MESSAGE);
                 }
             }
+
             valueCache.clear();
         });
-
+ */
         cancelButton.addActionListener(e -> {
             // 还原表格到修改前的状态
         });
-
 
         //监听表格模型的更改事件
         tableModel.addTableModelListener(e -> {

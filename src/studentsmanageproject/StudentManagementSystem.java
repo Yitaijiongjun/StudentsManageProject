@@ -24,7 +24,7 @@ public class StudentManagementSystem {
         try {
             String USER = "root";
             String PASSWORD = "210569";
-            String URL = "jdbc:mysql://192.168.188.128:3306/students_manage";
+            String URL = "jdbc:mysql://192.168.188.134:3306/students_manage";
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
             showMessageDialog(frame, "数据库连接错误: " + e.getMessage(), "消息", INFORMATION_MESSAGE);
@@ -178,6 +178,8 @@ public class StudentManagementSystem {
     }
 
     public static void main(String[] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        System.setProperty("sun.java2d.uiScale", "1.0");
+
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
         //UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
