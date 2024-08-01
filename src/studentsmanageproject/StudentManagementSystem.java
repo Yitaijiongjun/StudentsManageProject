@@ -24,7 +24,7 @@ public class StudentManagementSystem {
         try {
             String USER = "root";
             String PASSWORD = "210569";
-            String URL = "jdbc:mysql://192.168.188.134:3306/students_manage";
+            String URL = "jdbc:mysql://192.168.0.100:3306/students_manage";
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
             showMessageDialog(frame, "数据库连接错误: " + e.getMessage(), "消息", INFORMATION_MESSAGE);
@@ -178,9 +178,13 @@ public class StudentManagementSystem {
     }
 
     public static void main(String[] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        System.setProperty("sun.java2d.uiScale", "1.0");
+
 
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+        /*
+        该现代化主题进行了高 DPI缩放适配, 与高 JDK版本保持一致,但是在低 JDK版本会有一些图标 bug
+        如果想使用高版本 JDK,需要使用System.setProperty("sun.java2d.uiScale", "1.0");指定缩放比例,但这同时也会导致部分组件默认尺寸过小
+        */
         //UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
         //UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         //UIManager.setLookAndFeel("apple.laf.AquaLookAndFeel");
@@ -189,7 +193,7 @@ public class StudentManagementSystem {
         //UIManager.setLookAndFeel(new FlatIntelliJLaf());
 
         // 设置全局字体
-        setGlobalFont(new Font("宋体", BOLD, 24));
+        setGlobalFont(new Font("等线", BOLD, 24));
         // 启动主系统
         new StudentManagementSystem();
     }
