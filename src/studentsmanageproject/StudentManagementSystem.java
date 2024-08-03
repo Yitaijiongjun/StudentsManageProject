@@ -24,7 +24,7 @@ public class StudentManagementSystem {
         try {
             String USER = "root";
             String PASSWORD = "210569";
-            String URL = "jdbc:mysql://192.168.0.100:3306/students_manage";
+            String URL = "jdbc:mysql://192.168.188.137:3306/students_manage";
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
             showMessageDialog(frame, "数据库连接错误: " + e.getMessage(), "消息", INFORMATION_MESSAGE);
@@ -102,6 +102,11 @@ public class StudentManagementSystem {
 
         JMenu menu8 = new JMenu("查看数据库");
 
+        JMenu menu9 = new JMenu("命令列");
+        JMenuItem item9_1 = new JMenuItem("显示命令行");
+        menu9.add(item9_1);
+        item9_1.addActionListener(e -> cardLayout.show(mainPanel, "commandLine"));
+
 
         JMenu menu7 = new JMenu("连接状态") {
             @Override
@@ -122,6 +127,9 @@ public class StudentManagementSystem {
             menu7.setBackground(Color.RED);
             menu7.repaint();
         }).start());
+
+
+
         // 异步获取数据库连接
         new Thread(() -> {
             conn = getConnection();

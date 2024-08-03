@@ -4,6 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
 
+import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
+import static studentsmanageproject.StudentManagementSystem.*;
+
 public class UpdateStudentsPanel extends JPanel {
     // 修改学生面板的组件
     JTextField studentIdField = new JTextField();
@@ -147,13 +150,13 @@ public class UpdateStudentsPanel extends JPanel {
                 dormField.setText(rs.getString(5));
                 brithField.setText(rs.getString(6));
             } else {
-                JOptionPane.showMessageDialog(this, "学号不存在");
+                showMessageDialog(this, "学号不存在", "提示", INFORMATION_MESSAGE);
             }
             rs.close();
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "数据库错误: " + e.getMessage());
+            showMessageDialog(this, "数据库错误: " + e.getMessage(), "提示", INFORMATION_MESSAGE);
         }
     }
     private void updateStudent(String studentId, String name, String gender ,String classNumber, String dorm, String birth) {

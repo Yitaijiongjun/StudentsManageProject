@@ -1,4 +1,4 @@
-package test;
+package commandline;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,7 +8,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandLineModule extends JFrame {
+import static javax.swing.JOptionPane.INFORMATION_MESSAGE;
+import static studentsmanageproject.StudentManagementSystem.conn;
+
+public class CommandLineDialog extends JDialog {
     private JTextArea commandArea;
     private JTextArea resultArea;
     private JButton executeButton;
@@ -16,7 +19,7 @@ public class CommandLineModule extends JFrame {
     private List<String> commandHistory;
     private int historyIndex;
 
-    public CommandLineModule(Connection connection) {
+    public CommandLineDialog(Connection connection) {
         this.connection = connection;
         this.commandHistory = new ArrayList<>();
         this.historyIndex = 0;
@@ -26,7 +29,7 @@ public class CommandLineModule extends JFrame {
     private void initUI() {
         setTitle("SQL Command Line");
         setSize(800, 600);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         commandArea = new JTextArea(5, 70);
         resultArea = new JTextArea(20, 70);
@@ -121,23 +124,20 @@ public class CommandLineModule extends JFrame {
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Replace this with your actual database connection code
-            Connection connection = getDatabaseConnection();
-            CommandLineModule ex = new CommandLineModule(connection);
+
+            CommandLineDialog ex = new CommandLineDialog(getConnection());
             ex.setVisible(true);
         });
     }
 
-    // Placeholder method for getting a database connection
-    private static Connection getDatabaseConnection() {
-        // Add your database connection logic here
+
+    static Connection getConnection() {
         try {
-            // Example for MySQL database
-            String user = "root";
-            String password = "210569";
-            String url = "jdbc:mysql://192.168.188.135:3306/students_manage";
-            return DriverManager.getConnection(url, user, password);
+            String USER = "root";
+            String PASSWORD = "210569";
+            String URL = "jdbc:mysql://192.168.188.137:3306/students_manage";
+            return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
-            e.printStackTrace();
             return null;
         }
     }
