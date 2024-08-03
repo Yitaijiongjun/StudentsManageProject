@@ -29,7 +29,7 @@ public class CommandLineDialog extends JDialog {
     private void initUI() {
         setTitle("SQL Command Line");
         setSize(800, 600);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         commandArea = new JTextArea(5, 70);
         resultArea = new JTextArea(20, 70);
@@ -120,22 +120,22 @@ public class CommandLineDialog extends JDialog {
         }
         resultArea.setText(result.toString());
     }
-
+/*
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Replace this with your actual database connection code
 
-            CommandLineDialog ex = new CommandLineDialog(getConnection());
+            CommandLineModule ex = new CommandLineModule(getConnection());
             ex.setVisible(true);
         });
     }
 
-
+ */
     static Connection getConnection() {
         try {
             String USER = "root";
             String PASSWORD = "210569";
-            String URL = "jdbc:mysql://192.168.188.137:3306/students_manage";
+            String URL = "jdbc:mysql://192.168.0.100:3306/students_manage";
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
             return null;
