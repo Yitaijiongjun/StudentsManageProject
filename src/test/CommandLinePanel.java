@@ -10,7 +10,7 @@ public class CommandLinePanel extends JPanel {
     private StyledDocument doc;
     private SimpleAttributeSet promptStyle;
     private SimpleAttributeSet inputStyle;
-    private String prompt = "> ";
+    private String prompt = "mysql> ";
     StringBuilder currentInput = new StringBuilder();
 
     public CommandLinePanel() {
@@ -37,7 +37,6 @@ public class CommandLinePanel extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
 
         textPane.addKeyListener(new KeyAdapter() {
-
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {

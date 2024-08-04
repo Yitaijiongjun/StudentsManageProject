@@ -1,6 +1,7 @@
 package studentsmanageproject;
 
 
+import commandline.CommandLineDialog;
 import metadatafetch.FetchData;
 import metadatafetch.ViewTableDialog;
 import metadatafetch.ViewViewDialog;
@@ -105,7 +106,7 @@ public class StudentManagementSystem {
         JMenu menu9 = new JMenu("命令列");
         JMenuItem item9_1 = new JMenuItem("显示命令行");
         menu9.add(item9_1);
-        item9_1.addActionListener(e -> cardLayout.show(mainPanel, "commandLine"));
+        item9_1.addActionListener(e -> new CommandLineDialog(frame,"SQL命令行界面", Dialog.ModalityType.MODELESS));
 
 
         JMenu menu7 = new JMenu("连接状态") {
@@ -158,6 +159,7 @@ public class StudentManagementSystem {
         menuBar.add(menu6);
         menuBar.add(menu7);
         menuBar.add(menu8);
+        menuBar.add(menu9);
         frame.setJMenuBar(menuBar);
 
         // 添加面板

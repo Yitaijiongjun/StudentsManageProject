@@ -1,109 +1,228 @@
 package commandline;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.parser.Parser;
+import org.jsoup.select.Elements;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.sql.*;
-import java.text.CharacterIterator;
-import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.List;
+
+import static studentsmanageproject.StudentManagementSystem.conn;
 
 public class CommandLineDialog extends JDialog {
     private JTextArea commandArea;
     private JTextPane textPane;
     private JButton executeButton;
-    private Connection connection;
-    private List<String> commandHistory;
-    private int historyIndex;
+    private JButton clearButton;
+    private List<String> commandHistory = new ArrayList<>();
+    private int historyIndex = 0;
 
-    public CommandLineDialog(Connection connection) {
-        this.connection = connection;
-        this.commandHistory = new ArrayList<>();
-        this.historyIndex = 0;
-        initUI();
-    }
+    StringBuilder text = new StringBuilder();
+    String prompt = "<!DOCTYPE html>\n" +
+            "<html>\n" +
+            "<head>\n" +
+            "    <meta charset=\"UTF-8\">\n" +
+            "    <title>MySQL 常用命令提示</title>\n" +
+            "    <style>\n" +
+            "        body {\n" +
+            "            font-family: Arial, sans-serif;\n" +
+            "            margin: 20px;\n" +
+            "            background-color: #f4f4f4;\n" +
+            "        }\n" +
+            "        h1 {\n" +
+            "            color: #333;\n" +
+            "        }\n" +
+            "        .command {\n" +
+            "            background-color: #282c34;\n" +
+            "            color: #61dafb;\n" +
+            "            padding: 10px;\n" +
+            "            border-radius: 5px;\n" +
+            "            margin-bottom: 10px;\n" +
+            "        }\n" +
+            "        .description {\n" +
+            "            color: #555;\n" +
+            "            margin-bottom: 20px;\n" +
+            "        }\n" +
+            "        hr {\n" +
+            "            border: none;\n" +
+            "            height: 1px;\n" +
+            "            background-color: #ddd;\n" +
+            "            margin: 20px 0;\n" +
+            "        }\n" +
+            "    </style>\n" +
+            "</head>\n" +
+            "<body>\n" +
+            "    <h1>MySQL 常用命令提示</h1>\n" +
+            "    <div class=\"description\"></div>\n" +
+            "\n" +
+            "    <div class=\"command\">\n" +
+            "        <strong>显示数据库：</strong><br>\n" +
+            "        <code>SHOW DATABASES;</code>\n" +
+            "    </div>\n" +
+            "    <div class=\"command\">\n" +
+            "        <strong>选择数据库：</strong><br>\n" +
+            "        <code>USE database_name;</code>\n" +
+            "    </div>\n" +
+            "    <div class=\"command\">\n" +
+            "        <strong>显示表：</strong><br>\n" +
+            "        <code>SHOW TABLES;</code>\n" +
+            "    </div>\n" +
+            "    <div class=\"command\">\n" +
+            "        <strong>描述表结构：</strong><br>\n" +
+            "        <code>DESCRIBE table_name;</code>\n" +
+            "    </div>\n" +
+            "    <div class=\"command\">\n" +
+            "        <strong>创建数据库：</strong><br>\n" +
+            "        <code>CREATE DATABASE database_name;</code>\n" +
+            "    </div>\n" +
+            "    <div class=\"command\">\n" +
+            "        <strong>删除数据库：</strong><br>\n" +
+            "        <code>DROP DATABASE database_name;</code>\n" +
+            "    </div>\n" +
+            "    <div class=\"command\">\n" +
+            "        <strong>创建表：</strong><br>\n" +
+            "        <code>CREATE TABLE table_name (column1 datatype, column2 datatype, ...);</code>\n" +
+            "    </div>\n" +
+            "    <div class=\"command\">\n" +
+            "        <strong>删除表：</strong><br>\n" +
+            "        <code>DROP TABLE table_name;</code>\n" +
+            "    </div>\n" +
+            "    <div class=\"command\">\n" +
+            "        <strong>插入数据：</strong><br>\n" +
+            "        <code>INSERT INTO table_name (column1, column2, ...) VALUES (value1, value2, ...);</code>\n" +
+            "    </div>\n" +
+            "    <div class=\"command\">\n" +
+            "        <strong>更新数据：</strong><br>\n" +
+            "        <code>UPDATE table_name SET column1 = value1, column2 = value2, ... WHERE condition;</code>\n" +
+            "    </div>\n" +
+            "    <div class=\"command\">\n" +
+            "        <strong>删除数据：</strong><br>\n" +
+            "        <code>DELETE FROM table_name WHERE condition;</code>\n" +
+            "    </div>\n" +
+            "    <div class=\"command\">\n" +
+            "        <strong>查询数据：</strong><br>\n" +
+            "        <code>SELECT column1, column2, ... FROM table_name WHERE condition;</code>\n" +
+            "    </div>\n" +
+            "\n" +
+            "    <hr>\n" +
+            "\n" +
+            "    <p style=\"margin-top: 0; color: #888;\"></p>\n" +
+            "</body>\n" +
+            "</html>\n";
 
-    private void initUI() {
-        setTitle("SQL Command Line");
-        setSize(800, 600);
+    public CommandLineDialog(Frame parent, String title, ModalityType modal) {
+        super(parent, title, modal);
+        setSize(2400, 1500);
+        setLocationRelativeTo(parent);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
-        commandArea = new JTextArea(5, 70);
+        commandArea = new JTextArea(7, 70);
         commandArea.setText("select * from 学生");
+        commandArea.setFont(new Font("SimHei", Font.PLAIN, 24));
         textPane = new JTextPane();
+        textPane.setForeground(Color.GREEN);
+        textPane.setCaretColor(Color.RED);
         textPane.setContentType("text/html");
+        text.append(prompt);
+        textPane.setText(text.toString());
         textPane.setEditable(false);
 
-        executeButton = new JButton("Execute");
+        executeButton = new JButton("执行");
+        clearButton = new JButton("清屏");
         executeButton.addActionListener(new ExecuteButtonListener());
+        clearButton.addActionListener(e -> {
+            text.delete(0, text.length());
+            text.append(prompt);
+            textPane.setText(text.toString());
+        });
 
         JPanel commandPanel = new JPanel();
+        JPanel promptPanel = new JPanel(new BorderLayout());
+        promptPanel.add(new Label("mysql>"),BorderLayout.NORTH);
+        JPanel buttonPanel = new JPanel(new GridLayout(2,1));
+        buttonPanel.add(executeButton);
+        buttonPanel.add(clearButton);
         commandPanel.setLayout(new BorderLayout());
+        commandPanel.add(promptPanel, BorderLayout.WEST);
         commandPanel.add(new JScrollPane(commandArea), BorderLayout.CENTER);
-        commandPanel.add(executeButton, BorderLayout.EAST);
+        commandPanel.add(buttonPanel, BorderLayout.EAST);
 
-        JPanel resultPanel = new JPanel();
-        resultPanel.setLayout(new BorderLayout());
+        JPanel resultPanel = new JPanel(new BorderLayout());
+
         resultPanel.add(new JScrollPane(textPane), BorderLayout.CENTER);
 
         getContentPane().add(commandPanel, BorderLayout.NORTH);
         getContentPane().add(resultPanel, BorderLayout.CENTER);
 
         commandArea.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                commandAreaKeyPressed(evt);
+            public void keyPressed(KeyEvent evt) {
+                if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                    new ExecuteButtonListener().actionPerformed
+                            (new ActionEvent(executeButton, ActionEvent.ACTION_PERFORMED, ""));
+                } else if(evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP) {
+                    if (historyIndex > 0) {
+                        historyIndex--;
+                        commandArea.setText(commandHistory.get(historyIndex));
+                    }
+                } else if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN) {
+                    if (historyIndex < commandHistory.size() - 1) {
+                        historyIndex++;
+                        commandArea.setText(commandHistory.get(historyIndex));
+                    } else {
+                        commandArea.setText("");
+                    }
+                }
             }
         });
+        setVisible(true);
     }
-
-    private void commandAreaKeyPressed(java.awt.event.KeyEvent evt) {
-        if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP) {
-            if (historyIndex > 0) {
-                historyIndex--;
-                commandArea.setText(commandHistory.get(historyIndex));
-            }
-        } else if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN) {
-            if (historyIndex < commandHistory.size() - 1) {
-                historyIndex++;
-                commandArea.setText(commandHistory.get(historyIndex));
-            } else {
-                commandArea.setText("");
-            }
-        }
-    }
-
     private class ExecuteButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String command = commandArea.getText().trim();
             if (!command.isEmpty()) {
                 commandHistory.add(command);
                 historyIndex = commandHistory.size();
-                executeCommand(command);
+                // 获取当前的HTML内容并保存<body>部分的内容
+                int bodyStart = text.indexOf("<body>") + 6;
+                int bodyEnd = text.indexOf("</body>");
+                String bodyContent = text.substring(bodyStart, bodyEnd).trim();
+                // 使用StringBuilder拼接新的内容
+                StringBuilder newContent = new StringBuilder(bodyContent);
+                newContent.append("<hr>"); // 添加分隔符
+                try (Statement stmt = conn.createStatement()) {
+                    boolean isResultSet = stmt.execute(command);
+                    if (isResultSet) {
+                        ResultSet rs = stmt.getResultSet();
+                        // 在生成的表格HTML中添加样式
+                        newContent.append("<div style=\"font-size:14px; font-weight:bold;\">")
+                                .append(generateHtmlTable(rs))
+                                .append("</div>");
+                    } else {
+                        int updateCount = stmt.getUpdateCount();
+                        newContent.append("<p style=\"font-size:14px;\">Update Count: ").append(updateCount).append("</p>");
+                    }
+                } catch (SQLException sqle) {
+                    newContent.append("<p style=\"font-size:14px; color:red;\">Error: ").append(sqle.getMessage()).append("</p>");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                // 重新构建完整的HTML内容
+                String finalContent = "<html><head></head><body>" + newContent.toString() + "</body></html>";
+                // 更新textPane的内容
+                text.replace(0, text.length(), finalContent);
+                textPane.setText(finalContent);
             }
         }
     }
-
-    private void executeCommand(String command) {
-        textPane.setText(""); // 清空之前的结果
-        try (Statement stmt = connection.createStatement()) {
-            boolean isResultSet = stmt.execute(command);
-
-            if (isResultSet) {
-                ResultSet rs = stmt.getResultSet();
-                textPane.setText(generateHtmlTable(rs));
-            } else {
-                int updateCount = stmt.getUpdateCount();
-                textPane.setText("Update Count: " + updateCount);
-            }
-        } catch (SQLException e) {
-            textPane.setText("Error: " + e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     public String generateHtmlTable(ResultSet rs) {
         StringBuilder htmlBuilder = new StringBuilder();
         try {
@@ -155,7 +274,7 @@ public class CommandLineDialog extends JDialog {
         }
         return htmlBuilder.toString();
     }
-    /*
+/*
 @Deprecated
     private String generateTableData(ResultSet rs) {
         StringBuilder headerBuilder = null;
@@ -258,13 +377,9 @@ public class CommandLineDialog extends JDialog {
                 || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS
                 || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION;
     }
-
-     */
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             CommandLineDialog ex = new CommandLineDialog(getConnection());
-            ex.setVisible(true);
         });
     }
 
@@ -278,5 +393,6 @@ public class CommandLineDialog extends JDialog {
             return null;
         }
     }
+*/
 }
 
