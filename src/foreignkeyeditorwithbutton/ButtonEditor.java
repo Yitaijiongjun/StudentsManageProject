@@ -7,26 +7,23 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
 import static java.awt.BorderLayout.*;
 import static java.awt.Dialog.ModalityType.APPLICATION_MODAL;
-import static metadatafetch.FetchData.FKCOLUMN_NAME;
 import static studentsmanageproject.OptimizeColumnRendering.ocr;
 
 public class ButtonEditor extends DefaultCellEditor {
     JDialog parent;
-    JTable maintable;
+    JTable mainTable;
     JPanel panel = new JPanel(new BorderLayout());
     JButton button = new JButton("...");
     String referenceTableName, fkTableName, fkColumnName, fkName, referenceColumnName;
     int row, column;
-    public ButtonEditor(JTextField textField, JDialog parent, JTable maintable, String fkTableName,
-    String fkColumnName, String fkName, String referenceTableName, String referenceColumnName) {
+    public ButtonEditor(JTextField textField, JDialog parent, JTable mainTable, String fkTableName,
+                        String fkColumnName, String fkName, String referenceTableName, String referenceColumnName) {
         super(textField);
         Font defaultFont = new Font("Dialog",Font.BOLD,24);
         // 将系统默认字体应用到按钮上
@@ -37,10 +34,10 @@ public class ButtonEditor extends DefaultCellEditor {
         button.addActionListener(e -> showForeignKeyDialog(row, column));
         panel.add(button, EAST);
 
-        setClickCountToStart(2);// 渲染器为死按钮需注意
+        //setClickCountToStart(2);// 渲染器为死按钮需注意
 
         this.parent = parent;
-        this.maintable = maintable;
+        this.mainTable = mainTable;
         this.fkTableName = fkTableName;
         this.fkColumnName = fkColumnName;
         this.fkName = fkName;
@@ -170,7 +167,7 @@ public class ButtonEditor extends DefaultCellEditor {
         dialog.add(tableScrollPane, CENTER);
         dialog.add(footer, SOUTH);
 
-        Rectangle r = maintable.getCellRect(row, column, true);
+        Rectangle r = mainTable.getCellRect(row, column, true);
         Point location =r.getLocation();
         SwingUtilities.convertPointToScreen(location, parent);
         dialog.setLocation( location.x + 2, location.y + r.height + 93);

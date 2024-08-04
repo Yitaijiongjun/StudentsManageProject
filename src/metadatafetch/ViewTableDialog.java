@@ -5,6 +5,7 @@ import foreignkeyeditorwithbutton.ButtonRenderer;
 import studentsmanageproject.StudentManagementSystem;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
@@ -52,8 +53,6 @@ public class ViewTableDialog extends JDialog {
         DefaultTableModel tableModel = new DefaultTableModel((Vector) data, (Vector) columnNames);
 
         JTable table = new JTable(tableModel);
-
-
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -119,7 +118,16 @@ public class ViewTableDialog extends JDialog {
 
         Object[] o = new Object[columnNames.size()];
 
-        addButton.addActionListener(e -> tableModel.addRow(o));
+        addButton.addActionListener(e -> {
+            if(table.isEditing())table.getCellEditor(table.getSelectedRow(), table.getEditingColumn()).stopCellEditing();
+            tableModel.addRow(o);
+            table.setEditingColumn(0);
+            table.setColumnSelectionInterval(0, 0);
+            int rowCount = tableModel.getRowCount() - 1;
+            table.setEditingRow(rowCount);
+            table.setRowSelectionInterval(rowCount, rowCount);
+            table.editCellAt(rowCount, 0); // 开始编辑指定的单元格
+        });
 
         List<List<Object>> valueCache = new ArrayList<>();
 /*
@@ -171,9 +179,16 @@ public class ViewTableDialog extends JDialog {
 
             valueCache.clear();
         });
+
  */
+
         cancelButton.addActionListener(e -> {
             // 还原表格到修改前的状态
+        });
+
+        flashButton.addActionListener(e -> {
+            FetchData.fetchData(columnNames, columnTypes, data, tableName);
+            tableModel.setDataVector((Vector) data, (Vector) columnNames);
         });
 
         //监听表格模型的更改事件
@@ -187,9 +202,14 @@ public class ViewTableDialog extends JDialog {
                 valueInformation.add(column);
                 valueInformation.add(value);
                 valueCache.add(valueInformation);
-                System.out.println(row + "行" + column + "列有更改:" + tableModel.getValueAt(row, column));
-            }
+                System.out.println((row+1) + "行" + (column+1) + "列有更改:" + tableModel.getValueAt(row, column));
+            } else System.out.println((row+1) + "行" + "新添加");
         });
         setVisible(true);
     }
+}
+class CacheData{
+    int row;
+    int column;
+    Object data;
 }
