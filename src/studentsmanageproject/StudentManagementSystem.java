@@ -24,7 +24,7 @@ public class StudentManagementSystem {
         try {
             String USER = "root";
             String PASSWORD = "210569";
-            String URL = "jdbc:mysql://192.168.188.137:3306/students_manage";
+            String URL = "jdbc:mysql://192.168.188.138:3306/students_manage";
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
             showMessageDialog(frame, "数据库连接错误: " + e.getMessage(), "消息", INFORMATION_MESSAGE);

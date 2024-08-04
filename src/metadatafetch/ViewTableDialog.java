@@ -73,7 +73,8 @@ public class ViewTableDialog extends JDialog {
         // 设置表格行高
         table.setRowHeight(34);
 
-        setSize(ocr(table), 600);
+        setMinimumSize(new Dimension(ocr(table), 600));
+
         table.revalidate();
         table.repaint();
         setLocationRelativeTo(parent);

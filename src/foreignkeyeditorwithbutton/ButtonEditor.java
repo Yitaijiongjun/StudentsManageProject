@@ -173,7 +173,7 @@ public class ButtonEditor extends DefaultCellEditor {
         Rectangle r = maintable.getCellRect(row, column, true);
         Point location =r.getLocation();
         SwingUtilities.convertPointToScreen(location, parent);
-        dialog.setLocation( location.x + 3, location.y + r.height + 95);
+        dialog.setLocation( location.x + 2, location.y + r.height + 93);
         dialog.setVisible(true);
     }
 }
