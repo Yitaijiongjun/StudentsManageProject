@@ -188,8 +188,6 @@ public class StudentManagementSystem {
     }
 
     public static void main(String[] args) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-
-
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         /*
         该现代化主题进行了高 DPI缩放适配, 与高 JDK版本保持一致,但是在低 JDK版本会有一些图标 bug
@@ -205,7 +203,7 @@ public class StudentManagementSystem {
         // 设置全局字体
         setGlobalFont(new Font("等线", BOLD, 24));
         // 启动主系统
-        new StudentManagementSystem();
+        SwingUtilities.invokeLater(() -> new StudentManagementSystem());
     }
     public static void setGlobalFont(Font font) {
         UIManager.put("Label.font", font);

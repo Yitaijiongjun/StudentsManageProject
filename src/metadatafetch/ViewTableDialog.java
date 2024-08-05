@@ -54,6 +54,8 @@ public class ViewTableDialog extends JDialog {
 
         JTable table = new JTable(tableModel);
 
+        table.isEditing();
+
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         add(scrollPane, CENTER);

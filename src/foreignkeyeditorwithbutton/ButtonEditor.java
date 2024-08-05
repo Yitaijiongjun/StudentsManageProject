@@ -7,7 +7,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.List;
 import java.util.Vector;
 
@@ -30,6 +34,17 @@ public class ButtonEditor extends DefaultCellEditor {
         button.setFont(defaultFont);
         button.setMargin(new Insets(0, 3, 0, 3));
         panel.add(editorComponent, CENTER);
+        /*
+        editorComponent.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "startEditing");
+        editorComponent.getActionMap().put("startEditing", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((JTextField)editorComponent).selectAll(); // 选中文本1
+                editorComponent.requestFocusInWindow(); // 确保文本框有焦点
+            }
+        });
+
+         */
 
         button.addActionListener(e -> showForeignKeyDialog(row, column));
         panel.add(button, EAST);
@@ -50,6 +65,13 @@ public class ButtonEditor extends DefaultCellEditor {
         delegate.setValue(value);
         this.row = row;
         this.column = column;
+        InputMap map = editorComponent.getInputMap(JComponent.WHEN_FOCUSED);
+        ActionMap am = editorComponent.getActionMap();
+        panel.setInputMap(JComponent.WHEN_FOCUSED, map);
+        panel.setActionMap(am);
+        // SwingUtilities.invokeLater为关键代码,确保 JTextField可以正确获取焦点,可以通过键盘开始编辑
+        SwingUtilities.invokeLater(() -> editorComponent.requestFocusInWindow());
+
         return panel;
     }
 
