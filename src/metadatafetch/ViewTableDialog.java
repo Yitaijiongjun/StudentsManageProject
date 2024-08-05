@@ -128,7 +128,9 @@ public class ViewTableDialog extends JDialog {
             int rowCount = tableModel.getRowCount() - 1;
             table.setEditingRow(rowCount);
             table.setRowSelectionInterval(rowCount, rowCount);
-            table.editCellAt(rowCount, 0); // 开始编辑指定的单元格
+            table.editCellAt(rowCount, 0);// 开始编辑指定的单元格
+            //table.changeSelection(1, 0, false, false); // 行, 列, 是否扩展选择范围, 是否滚动显示
+            table.requestFocusInWindow(); // 请求焦点
         });
 
         List<List<Object>> valueCache = new ArrayList<>();

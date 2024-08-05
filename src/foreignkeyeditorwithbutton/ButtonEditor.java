@@ -69,6 +69,7 @@ public class ButtonEditor extends DefaultCellEditor {
         ActionMap am = editorComponent.getActionMap();
         panel.setInputMap(JComponent.WHEN_FOCUSED, map);
         panel.setActionMap(am);
+
         // SwingUtilities.invokeLater为关键代码,确保 JTextField可以正确获取焦点,可以通过键盘开始编辑
         SwingUtilities.invokeLater(() -> editorComponent.requestFocusInWindow());
 
